@@ -1,1 +1,0 @@
-This is a basic preview. You can use dd($block) to view the data you have access to. <br />This preview file is located at: /home/iamtheuri/rba/resources/views/site/blocks/survey.blade.php
