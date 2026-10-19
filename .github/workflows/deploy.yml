@@ -39,7 +39,8 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /domains/teambuilding.bizetuhub.com/public_html/
+          # The FTP account is already restricted to this domain's document root.
+          server-dir: ./
           exclude: |
             **/.git*
             **/.git*/**
