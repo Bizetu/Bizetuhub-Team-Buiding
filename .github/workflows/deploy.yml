@@ -42,7 +42,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
-          server-dir: ./
+          server-dir: ./bizetuhub/Team_Building/
           timeout: 180000
           exclude: |
             **/.git*
