@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Front\PageController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::redirect('/home', '/', 301)->name('home.alias');
@@ -24,6 +25,14 @@ Route::post('/contact', [PageController::class, 'storeEnquiry'])->middleware('th
 Route::get('/book', [PageController::class, 'book'])->name('book');
 Route::post('/book', [PageController::class, 'storeBooking'])->middleware('throttle:5,1')->name('book.store');
 Route::get('/pages/{slug}', [PageController::class, 'page'])->name('pages.show');
+// Serve Twill uploads through Laravel if the host does not expose public/storage.
+Route::get('/storage/uploads/{path}', function (string $path) {
+    $disk = Storage::disk('twill_media_library');
+
+    abort_unless($disk->exists($path), 404);
+
+    return $disk->response($path);
+})->where('path', '.*')->name('media.uploads');
 // RBA-style root-level URLs for custom CMS pages. Fixed routes above remain authoritative.
 Route::get('/{slug}', [PageController::class, 'page'])
     ->where('slug', '(?!admin$)[a-z0-9]+(?:-[a-z0-9]+)*')

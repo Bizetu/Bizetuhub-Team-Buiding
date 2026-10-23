@@ -1,58 +1,60 @@
-name: Deploy to cPanel
+name: Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  DEPLOY_PATH: /home/bizetuh1/bizetuhub/Team_Building
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
-          tools: composer:v2
+          php-version: '8.5'
+          extensions: mbstring, xml, curl, mysql, zip, bcmath, intl
 
-      - name: Install production PHP dependencies
-        run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+      - run: composer install --no-dev --optimize-autoloader --no-interaction
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: npm
+          node-version: 20
+      - run: npm ci && npm run build
 
-      - name: Build frontend assets
+      - name: Set up SSH
         run: |
-          npm ci
-          npm install --no-save @rollup/rollup-linux-x64-gnu@4.64.3 lightningcss-linux-x64-gnu@1.32.0 @tailwindcss/oxide-linux-x64-gnu@4.3.3
-          npm run build
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy files over FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          server-dir: ./bizetuhub/Team_Building/
-          timeout: 180000
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/vendor/**
-            vendor.zip
-            **/.env
-            **/.env.*
-            !**/.env.example
-            **/tests/**
-            **/.github/**
-            
+      - name: Upload files
+        run: |
+          rsync -az -e "ssh -p ${{ secrets.SSH_PORT }}" \
+            --exclude='.git*' --exclude='.github' --exclude='.agents' --exclude='.codex' \
+            --exclude='node_modules' --exclude='tests' \
+            --exclude='.env' --exclude='storage/' \
+            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:$DEPLOY_PATH/
+
+      - name: Post-deploy
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            set -e
+            cd $DEPLOY_PATH
+            test -f .env || { echo 'Missing .env in $DEPLOY_PATH'; exit 1; }
+            mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs storage/app/public/uploads bootstrap/cache
+            if [ -e public/storage ] && [ ! -L public/storage ]; then
+              echo 'public/storage exists and is not a symlink; resolve it before deployment.'
+              exit 1
+            fi
+            php artisan migrate --force
+            php artisan storage:link --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+          "
