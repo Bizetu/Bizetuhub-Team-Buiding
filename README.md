@@ -4,7 +4,7 @@ A Laravel and Twill CMS platform for team-building services, events, enquiries a
 
 ## Requirements
 
-- PHP 8.4.1 or later (the committed Composer lock file currently requires this)
+- PHP 8.5 (`^8.5` in Composer)
 - Composer
 - Node.js and npm
 - MySQL with the PDO MySQL PHP extension
