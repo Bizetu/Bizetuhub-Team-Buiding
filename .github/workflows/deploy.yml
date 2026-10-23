@@ -31,19 +31,32 @@ jobs:
           mkdir -p ~/.ssh
           printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<EOF
+          Host deploy
+            HostName ${{ secrets.SSH_HOST }}
+            Port ${{ secrets.SSH_PORT }}
+            User ${{ secrets.SSH_USER }}
+            IdentityFile ~/.ssh/id_ed25519
+            StrictHostKeyChecking accept-new
+            ConnectTimeout 30
+            ServerAliveInterval 15
+            ControlMaster auto
+            ControlPath ~/.ssh/cm-%C
+            ControlPersist 600
+          EOF
+          chmod 600 ~/.ssh/config
 
       - name: Upload files
         run: |
-          rsync -az -e "ssh -p ${{ secrets.SSH_PORT }}" \
+          rsync -az -e ssh \
             --exclude='.git*' --exclude='.github' --exclude='.agents' --exclude='.codex' \
             --exclude='node_modules' --exclude='tests' \
             --exclude='.env' --exclude='/storage/' --exclude='/bootstrap/cache/*.php' \
-            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:$DEPLOY_PATH/
+            ./ deploy:$DEPLOY_PATH/
 
       - name: Post-deploy
         run: |
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+          ssh deploy "
             set -e
             cd $DEPLOY_PATH
             test -f .env || { echo 'Missing .env in $DEPLOY_PATH'; exit 1; }
