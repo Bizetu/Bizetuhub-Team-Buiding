@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  DEPLOY_PATH: /home/bizetuh1/bizetuhub/Team_Building
+  DEPLOY_PATH: /home/bizetuh1/domains/teambuilding.bizetuhub.com/Team_Building
 
 jobs:
   deploy:
@@ -74,4 +74,3 @@ jobs:
             php artisan route:cache
             php artisan view:cache
           "
-          
