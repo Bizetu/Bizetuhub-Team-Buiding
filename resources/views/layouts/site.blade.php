@@ -16,7 +16,7 @@
                 <img src="{{ $siteSettings['logo'] ?: asset('images/bizetu-hub-logo.png') }}" alt="" class="h-12 w-12 rounded-full object-cover shadow-sm ring-1 ring-slate-200">
                 <span class="flex flex-col text-lg font-black tracking-tight text-slate-950 sm:text-xl">{{ $siteSettings['name'] }}@if($siteSettings['tag_line'])<small class="text-xs font-medium tracking-normal text-slate-500">{{ $siteSettings['tag_line'] }}</small>@endif</span>
             </a>
-            <nav id="site-navigation" class="hidden items-center gap-5 text-[13px] font-semibold text-slate-700 xl:flex" style="margin-left:auto;flex:none;" aria-label="Main navigation">
+            <nav id="site-navigation" class="hidden items-center gap-5 text-base font-semibold text-slate-700 xl:flex" style="margin-left:auto;flex:none;" aria-label="Main navigation">
                 @forelse($siteMenus->get('main', collect()) as $menuItem)
                     <a class="transition hover:text-emerald-700" href="{{ $menuItem->href }}" @if($menuItem->open_new_tab) target="_blank" rel="noopener noreferrer" @endif>{{ $menuItem->title }}</a>
                 @empty
@@ -40,7 +40,7 @@
             </div>
         </div>
         <nav id="mobile-navigation" class="hidden border-t border-slate-200 bg-white px-6 py-5 xl:hidden" aria-label="Mobile navigation">
-            <div class="mx-auto grid max-w-7xl gap-4 text-sm font-semibold text-slate-800">
+            <div class="mx-auto grid max-w-7xl gap-4 text-base font-semibold text-slate-800">
                 @forelse($siteMenus->get('main', collect()) as $menuItem)
                     <a class="hover:text-emerald-700" href="{{ $menuItem->href }}" @if($menuItem->open_new_tab) target="_blank" rel="noopener noreferrer" @endif>{{ $menuItem->title }}</a>
                 @empty
