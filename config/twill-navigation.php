@@ -2,7 +2,7 @@
 
 return [
     'pages' => [
-        'title' => 'Website',
+        'title' => 'Websites',
         'primary_navigation' => [
             'pages' => ['title' => 'Pages', 'module' => true],
             'menuItems' => ['title' => 'Menu', 'module' => true],
