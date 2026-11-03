@@ -7,9 +7,9 @@ return [
             'pages' => ['title' => 'Pages', 'module' => true],
             'menuItems' => ['title' => 'Menu', 'module' => true],
             'menuTypes' => ['title' => 'Menu type', 'module' => true],
+            'homeSlides' => ['title' => 'Homepage sliders', 'module' => true],
         ],
     ],
-    'homeSlides' => ['title' => 'Homepage sliders'],
     'services' => [
         'title' => 'Services',
         'primary_navigation' => [
