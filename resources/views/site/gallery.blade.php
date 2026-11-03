@@ -23,10 +23,10 @@
                 @php($image = $item->image('image', 'default', [], true))
                 <figure class="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
                     @if($image)
-                        <img src="{{ $image }}" alt="{{ $item->alt_text }}" class="aspect-[4/3] w-full object-cover" loading="lazy">
+                        <img src="{{ $image }}" alt="{{ $item->alt_text ?: $item->title }}" class="aspect-[4/3] w-full object-cover" loading="lazy">
                     @else
                         <div class="flex aspect-[4/3] items-center justify-center bg-gradient-to-br from-emerald-700 via-teal-800 to-slate-950 px-8 text-center text-2xl font-bold text-white">
-                            {{ $item->alt_text }}
+                            {{ $item->alt_text ?: $item->title }}
                         </div>
                     @endif
                     <figcaption class="p-6">

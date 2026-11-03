@@ -21,7 +21,16 @@
                 @if($event->capacity)<span>Places available: up to {{ number_format($event->capacity) }}</span>@endif
             </div>
         @endif
-        <a href="{{ route('book', ['event_id' => $event->id]) }}" class="mt-10 inline-flex rounded-full bg-emerald-600 px-6 py-4 font-bold text-white hover:bg-emerald-700">Register your interest ↗</a>
+        <div class="mt-10 flex flex-wrap gap-3">
+            @if($event->registration_url)
+                <a href="{{ $event->registration_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-full bg-emerald-600 px-6 py-4 font-bold text-white hover:bg-emerald-700">Register for this event ↗</a>
+            @else
+                <a href="{{ route('book', ['event_id' => $event->id]) }}" class="inline-flex rounded-full bg-emerald-600 px-6 py-4 font-bold text-white hover:bg-emerald-700">Register your interest ↗</a>
+            @endif
+            @if($event->join_url)
+                <a href="{{ $event->join_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex rounded-full border border-emerald-700 px-6 py-4 font-bold text-emerald-800 hover:bg-emerald-50">Join online ↗</a>
+            @endif
+        </div>
     </article>
 </main>
 @endsection

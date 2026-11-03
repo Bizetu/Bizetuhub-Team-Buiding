@@ -46,6 +46,8 @@ class EventRequest extends Request
             'slug' => ['required', 'string', 'max:255', Rule::unique('events', 'slug')->ignore($this->route('event'))],
             'description' => [Rule::requiredIf($publishing), 'nullable', 'string'],
             'venue' => [Rule::requiredIf($publishing), 'nullable', 'string', 'max:255'],
+            'registration_url' => ['nullable', 'url', 'max:2048'],
+            'join_url' => ['nullable', 'url', 'max:2048'],
             'starts_at' => [Rule::requiredIf($publishing), 'nullable', 'date'],
             'ends_at' => ['nullable', 'date', 'after:starts_at'],
             'capacity' => ['nullable', 'integer', 'min:1'],

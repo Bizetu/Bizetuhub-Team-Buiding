@@ -17,7 +17,7 @@ class Event extends Model
         ],
     ];
 
-    protected $fillable = ['title', 'slug', 'description', 'venue', 'starts_at', 'ends_at', 'capacity', 'fee', 'published'];
+    protected $fillable = ['title', 'slug', 'description', 'venue', 'registration_url', 'join_url', 'starts_at', 'ends_at', 'capacity', 'fee', 'published'];
 
     protected $casts = ['starts_at' => 'datetime', 'ends_at' => 'datetime', 'fee' => 'decimal:2', 'published' => 'boolean'];
 

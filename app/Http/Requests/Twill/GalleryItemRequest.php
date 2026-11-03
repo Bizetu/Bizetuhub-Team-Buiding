@@ -11,7 +11,9 @@ class GalleryItemRequest extends Request
         return [
             'title' => ['required', 'string', 'max:255'],
             'category' => ['nullable', 'string', 'max:100'],
-            'alt_text' => ['required', 'string', 'max:255'],
+            // The quick-create modal only asks for a title. Editors can add
+            // the accessible image description in the full edit form.
+            'alt_text' => ['nullable', 'string', 'max:255'],
             'caption' => ['nullable', 'string', 'max:3000'],
         ];
     }

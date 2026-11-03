@@ -20,6 +20,8 @@ class EventController extends BaseModuleController
         $form->add(Input::make()->name('slug')->label('Key'));
         $form->add(Wysiwyg::make()->name('description')->label('Description'));
         $form->add(Input::make()->name('venue')->label('Venue'));
+        $form->add(Input::make()->name('registration_url')->label('Registration link')->type('url')->note('Optional link for attendees to register for this event.'));
+        $form->add(Input::make()->name('join_url')->label('Join link')->type('url')->note('Optional Zoom or webinar link to join the event.'));
         $form->add(DatePicker::make()->name('starts_at')->label('Starts at'));
         $form->add(DatePicker::make()->name('ends_at')->label('Ends at')->allowClear());
         $form->add(Input::make()->name('capacity')->label('Participant capacity')->type('number'));

@@ -69,7 +69,7 @@
                 @foreach($pageData['galleryItems'] as $item)
                     @if($item->image('image', 'default', [], true))
                         <figure class="overflow-hidden rounded-3xl bg-white shadow-sm">
-                            <img src="{{ $item->image('image', 'default', [], true) }}" alt="{{ $item->alt_text }}" class="aspect-[4/3] w-full object-cover" loading="lazy">
+                            <img src="{{ $item->image('image', 'default', [], true) }}" alt="{{ $item->alt_text ?: $item->title }}" class="aspect-[4/3] w-full object-cover" loading="lazy">
                             @if($item->caption)<figcaption class="p-5 text-sm text-slate-600">{{ $item->caption }}</figcaption>@endif
                         </figure>
                     @endif

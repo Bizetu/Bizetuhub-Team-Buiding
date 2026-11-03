@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('category')->nullable();
-            $table->string('alt_text');
+            $table->string('alt_text')->nullable();
             $table->text('caption')->nullable();
             $table->boolean('published')->default(true);
             $table->unsignedInteger('position')->default(0);
