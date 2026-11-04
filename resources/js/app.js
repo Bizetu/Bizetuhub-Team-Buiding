@@ -55,10 +55,15 @@ if (homeSlider instanceof HTMLElement) {
 
             const activeVideo = slides[currentIndex].querySelector('video');
             if (muteButton instanceof HTMLButtonElement) {
-                muteButton.disabled = !(activeVideo instanceof HTMLVideoElement);
-                muteButton.setAttribute('aria-label', activeVideo instanceof HTMLVideoElement && !activeVideo.muted ? 'Mute animation' : 'Unmute animation');
-                muteButton.querySelector('[data-icon-muted]')?.classList.toggle('hidden', activeVideo instanceof HTMLVideoElement && !activeVideo.muted);
-                muteButton.querySelector('[data-icon-unmuted]')?.classList.toggle('hidden', !(activeVideo instanceof HTMLVideoElement && !activeVideo.muted));
+                const hasActiveVideo = activeVideo instanceof HTMLVideoElement;
+                muteButton.classList.toggle('hidden', !hasActiveVideo);
+                muteButton.setAttribute('aria-hidden', String(!hasActiveVideo));
+
+                if (hasActiveVideo) {
+                    muteButton.setAttribute('aria-label', !activeVideo.muted ? 'Mute animation' : 'Unmute animation');
+                    muteButton.querySelector('[data-icon-muted]')?.classList.toggle('hidden', !activeVideo.muted);
+                    muteButton.querySelector('[data-icon-unmuted]')?.classList.toggle('hidden', activeVideo.muted);
+                }
             }
 
             indicators.forEach((indicator, indicatorIndex) => {
