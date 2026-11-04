@@ -3,7 +3,9 @@
         <section class="service-detail-panel flex flex-col justify-between rounded-3xl p-7 sm:p-10 lg:col-span-7" aria-labelledby="service-title-{{ $service->slug }}">
             <div>
                 <div class="flex items-start justify-between gap-4">
-                    <div class="service-icon-tile flex h-14 w-14 items-center justify-center rounded-2xl text-2xl font-black text-amber-300" aria-hidden="true">{{ $service->icon ?: '✦' }}</div>
+                    <div class="service-icon-tile flex h-14 w-14 items-center justify-center rounded-2xl text-amber-300" aria-hidden="true">
+                        @include('site.partials.service-icon', ['service' => $service, 'class' => 'h-7 w-7'])
+                    </div>
                     <span class="rounded-full border border-amber-300/40 bg-amber-300/20 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-200">
                         {{ $service->badge ?: ($service->featured ? 'Featured' : 'Programme') }}
                     </span>

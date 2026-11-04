@@ -18,15 +18,22 @@
             </a>
             <nav id="site-navigation" class="hidden items-center gap-5 text-base font-semibold text-slate-700 xl:flex" style="margin-left:auto;flex:none;" aria-label="Main navigation">
                 @forelse($siteMenus->get('main', collect()) as $menuItem)
-                    <a class="transition hover:text-emerald-700" href="{{ $menuItem->href }}" @if($menuItem->open_new_tab) target="_blank" rel="noopener noreferrer" @endif>{{ $menuItem->title }}</a>
+                    @php
+                        $menuPath = trim((string) parse_url($menuItem->href, PHP_URL_PATH), '/');
+                        $menuIsActive = $menuItem->menu_key === 'home'
+                            ? request()->routeIs('home')
+                            : ($menuItem->menu_key && request()->routeIs($menuItem->menu_key.'*'));
+                        $menuIsActive = $menuIsActive || ($menuPath !== '' && request()->is($menuPath, $menuPath.'/*'));
+                    @endphp
+                    <a class="transition hover:text-emerald-700 {{ $menuIsActive ? 'font-extrabold text-emerald-700 underline decoration-amber-400 decoration-2 underline-offset-8' : '' }}" href="{{ $menuItem->href }}" @if($menuItem->open_new_tab) target="_blank" rel="noopener noreferrer" @endif @if($menuIsActive) aria-current="page" @endif>{{ $menuItem->title }}</a>
                 @empty
-                    <a class="transition hover:text-emerald-700" href="{{ route('services') }}">Services</a>
-                    <a class="transition hover:text-emerald-700" href="{{ route('events') }}">Events</a>
-                    <a class="transition hover:text-emerald-700" href="{{ route('industries') }}">Industries</a>
-                    <a class="transition hover:text-emerald-700" href="{{ route('insights') }}">Insights</a>
-                    <a class="transition hover:text-emerald-700" href="{{ route('gallery') }}">Gallery</a>
-                    <a class="transition hover:text-emerald-700" href="{{ route('about') }}">About</a>
-                    <a class="transition hover:text-emerald-700" href="{{ route('contact') }}">Contact</a>
+                    <a class="transition hover:text-emerald-700 {{ request()->routeIs('services*') ? 'font-extrabold text-emerald-700 underline decoration-amber-400 decoration-2 underline-offset-8' : '' }}" href="{{ route('services') }}" @if(request()->routeIs('services*')) aria-current="page" @endif>Services</a>
+                    <a class="transition hover:text-emerald-700 {{ request()->routeIs('events*') ? 'font-extrabold text-emerald-700 underline decoration-amber-400 decoration-2 underline-offset-8' : '' }}" href="{{ route('events') }}" @if(request()->routeIs('events*')) aria-current="page" @endif>Events</a>
+                    <a class="transition hover:text-emerald-700 {{ request()->routeIs('industries') ? 'font-extrabold text-emerald-700 underline decoration-amber-400 decoration-2 underline-offset-8' : '' }}" href="{{ route('industries') }}" @if(request()->routeIs('industries')) aria-current="page" @endif>Industries</a>
+                    <a class="transition hover:text-emerald-700 {{ request()->routeIs('insights*') ? 'font-extrabold text-emerald-700 underline decoration-amber-400 decoration-2 underline-offset-8' : '' }}" href="{{ route('insights') }}" @if(request()->routeIs('insights*')) aria-current="page" @endif>Insights</a>
+                    <a class="transition hover:text-emerald-700 {{ request()->routeIs('gallery') ? 'font-extrabold text-emerald-700 underline decoration-amber-400 decoration-2 underline-offset-8' : '' }}" href="{{ route('gallery') }}" @if(request()->routeIs('gallery')) aria-current="page" @endif>Gallery</a>
+                    <a class="transition hover:text-emerald-700 {{ request()->routeIs('about') ? 'font-extrabold text-emerald-700 underline decoration-amber-400 decoration-2 underline-offset-8' : '' }}" href="{{ route('about') }}" @if(request()->routeIs('about')) aria-current="page" @endif>About</a>
+                    <a class="transition hover:text-emerald-700 {{ request()->routeIs('contact') ? 'font-extrabold text-emerald-700 underline decoration-amber-400 decoration-2 underline-offset-8' : '' }}" href="{{ route('contact') }}" @if(request()->routeIs('contact')) aria-current="page" @endif>Contact</a>
                 @endforelse
             </nav>
             <div class="flex items-center gap-3">
@@ -42,15 +49,22 @@
         <nav id="mobile-navigation" class="hidden border-t border-slate-200 bg-white px-6 py-5 xl:hidden" aria-label="Mobile navigation">
             <div class="mx-auto grid max-w-7xl gap-4 text-base font-semibold text-slate-800">
                 @forelse($siteMenus->get('main', collect()) as $menuItem)
-                    <a class="hover:text-emerald-700" href="{{ $menuItem->href }}" @if($menuItem->open_new_tab) target="_blank" rel="noopener noreferrer" @endif>{{ $menuItem->title }}</a>
+                    @php
+                        $menuPath = trim((string) parse_url($menuItem->href, PHP_URL_PATH), '/');
+                        $menuIsActive = $menuItem->menu_key === 'home'
+                            ? request()->routeIs('home')
+                            : ($menuItem->menu_key && request()->routeIs($menuItem->menu_key.'*'));
+                        $menuIsActive = $menuIsActive || ($menuPath !== '' && request()->is($menuPath, $menuPath.'/*'));
+                    @endphp
+                    <a class="hover:text-emerald-700 {{ $menuIsActive ? 'font-extrabold text-emerald-700' : '' }}" href="{{ $menuItem->href }}" @if($menuItem->open_new_tab) target="_blank" rel="noopener noreferrer" @endif @if($menuIsActive) aria-current="page" @endif>{{ $menuItem->title }}</a>
                 @empty
-                    <a class="hover:text-emerald-700" href="{{ route('services') }}">Services</a>
-                    <a class="hover:text-emerald-700" href="{{ route('events') }}">Events</a>
-                    <a class="hover:text-emerald-700" href="{{ route('industries') }}">Industries</a>
-                    <a class="hover:text-emerald-700" href="{{ route('insights') }}">Insights</a>
-                    <a class="hover:text-emerald-700" href="{{ route('gallery') }}">Gallery</a>
-                    <a class="hover:text-emerald-700" href="{{ route('about') }}">About</a>
-                    <a class="hover:text-emerald-700" href="{{ route('contact') }}">Contact</a>
+                    <a class="hover:text-emerald-700 {{ request()->routeIs('services*') ? 'font-extrabold text-emerald-700' : '' }}" href="{{ route('services') }}" @if(request()->routeIs('services*')) aria-current="page" @endif>Services</a>
+                    <a class="hover:text-emerald-700 {{ request()->routeIs('events*') ? 'font-extrabold text-emerald-700' : '' }}" href="{{ route('events') }}" @if(request()->routeIs('events*')) aria-current="page" @endif>Events</a>
+                    <a class="hover:text-emerald-700 {{ request()->routeIs('industries') ? 'font-extrabold text-emerald-700' : '' }}" href="{{ route('industries') }}" @if(request()->routeIs('industries')) aria-current="page" @endif>Industries</a>
+                    <a class="hover:text-emerald-700 {{ request()->routeIs('insights*') ? 'font-extrabold text-emerald-700' : '' }}" href="{{ route('insights') }}" @if(request()->routeIs('insights*')) aria-current="page" @endif>Insights</a>
+                    <a class="hover:text-emerald-700 {{ request()->routeIs('gallery') ? 'font-extrabold text-emerald-700' : '' }}" href="{{ route('gallery') }}" @if(request()->routeIs('gallery')) aria-current="page" @endif>Gallery</a>
+                    <a class="hover:text-emerald-700 {{ request()->routeIs('about') ? 'font-extrabold text-emerald-700' : '' }}" href="{{ route('about') }}" @if(request()->routeIs('about')) aria-current="page" @endif>About</a>
+                    <a class="hover:text-emerald-700 {{ request()->routeIs('contact') ? 'font-extrabold text-emerald-700' : '' }}" href="{{ route('contact') }}" @if(request()->routeIs('contact')) aria-current="page" @endif>Contact</a>
                 @endforelse
                 <a href="{{ route('book') }}" class="mt-2 inline-flex justify-center rounded-full bg-amber-400 px-5 py-3 font-extrabold text-emerald-950">Request a proposal <span class="ml-2" aria-hidden="true">↗</span></a>
             </div>

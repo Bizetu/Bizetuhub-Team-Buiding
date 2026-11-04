@@ -192,6 +192,10 @@ body {
     background: #fde047;
 }
 
+.site-theme--dark main a.service-card-link:hover {
+    color: #022c22;
+}
+
 .service-secondary-link {
     border: 1px solid rgb(255 255 255 / 20%);
     color: rgb(236 253 245 / 90%);

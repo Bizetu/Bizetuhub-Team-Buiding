@@ -21,9 +21,9 @@ Route::get('/insights', [PageController::class, 'insights'])->name('insights');
 Route::get('/insights/{insight:slug}', [PageController::class, 'showInsight'])->name('insights.show');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
-Route::post('/contact', [PageController::class, 'storeEnquiry'])->middleware('throttle:5,1')->name('contact.store');
+Route::post('/contact', [PageController::class, 'storeEnquiry'])->middleware('throttle:3,1')->name('contact.store');
 Route::get('/book', [PageController::class, 'book'])->name('book');
-Route::post('/book', [PageController::class, 'storeBooking'])->middleware('throttle:5,1')->name('book.store');
+Route::post('/book', [PageController::class, 'storeBooking'])->middleware('throttle:3,1')->name('book.store');
 Route::get('/pages/{slug}', [PageController::class, 'page'])->name('pages.show');
 // Serve Twill uploads through Laravel if the host does not expose public/storage.
 Route::get('/storage/uploads/{path}', function (string $path) {
