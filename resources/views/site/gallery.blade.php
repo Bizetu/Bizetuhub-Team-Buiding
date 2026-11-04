@@ -37,7 +37,7 @@
                 </figure>
             @empty
                 <div class="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-slate-600 sm:col-span-2 lg:col-span-3">
-                    Gallery images will appear here once theyâ€™re added in the Twill admin.
+                    Gallery images will appear here soon.
                 </div>
             @endforelse
         </div>
