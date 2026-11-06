@@ -11,7 +11,7 @@
                 @endphp
                 <article data-home-slide data-has-video="{{ $slide->has_animation_video ? 'true' : 'false' }}" class="relative isolate flex min-h-[500px] items-center overflow-hidden sm:min-h-[520px] {{ $index === 0 ? '' : 'hidden' }}" aria-hidden="{{ $index === 0 ? 'false' : 'true' }}" aria-roledescription="slide" aria-label="{{ $index + 1 }} of {{ $homeSlides->count() }}">
                     @if($animationVideo)
-                        <video src="{{ $animationVideo }}" @if($background) poster="{{ $background }}" @endif class="absolute inset-0 -z-20 h-full w-full object-cover" muted loop playsinline preload="metadata" aria-hidden="true" @if($index > 0) tabindex="-1" @endif></video>
+                        <video id="bg_video" src="{{ $animationVideo }}" @if($background) poster="{{ $background }}" @endif class="absolute inset-0 -z-20 h-full w-full object-cover" muted loop playsinline preload="metadata" aria-hidden="true" @if($index > 0) tabindex="-1" @endif></video>
                     @elseif($background)
                         <img src="{{ $background }}" alt="{{ $slide->imageAltText('background') }}" class="absolute inset-0 -z-20 h-full w-full object-cover" @if($index > 0) loading="lazy" @else fetchpriority="high" @endif>
                     @else

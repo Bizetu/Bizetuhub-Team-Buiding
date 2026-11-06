@@ -53,7 +53,7 @@ if (homeSlider instanceof HTMLElement) {
                 }
             });
 
-            const activeVideo = slides[currentIndex].querySelector('video');
+            const activeVideo = slides[currentIndex].getElementById('bg_video');
             const hasActiveVideo = slides[currentIndex].dataset.hasVideo === 'true'
                 || activeVideo instanceof HTMLVideoElement;
 
