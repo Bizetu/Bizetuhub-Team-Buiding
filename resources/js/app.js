@@ -57,6 +57,10 @@ if (homeSlider instanceof HTMLElement) {
             const hasActiveVideo = slides[currentIndex].dataset.hasVideo === 'true'
                 || activeVideo instanceof HTMLVideoElement;
 
+            console.log('Active video:', activeVideo);
+            console.log('Has active video:', hasActiveVideo);
+            console.log('bool instance of vid element', activeVideo instanceof HTMLVideoElement);
+
             if (muteButton instanceof HTMLButtonElement) {
                 muteButton.classList.toggle('hidden', !hasActiveVideo);
                 muteButton.classList.toggle('flex', hasActiveVideo);
