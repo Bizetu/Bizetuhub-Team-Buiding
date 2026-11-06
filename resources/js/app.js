@@ -29,19 +29,31 @@ if (homeSlider instanceof HTMLElement) {
     const muteButton = homeSlider.querySelector('[data-slide-mute]');
     const togglePlayButton = homeSlider.querySelector('[data-slide-toggle-play]');
 
-    // Show/hide a control reliably (toggles both `hidden` and `flex`
-    // so the two Tailwind classes never fight each other).
-    const setVisible = (element, visible) => {
-        element.classList.toggle('hidden', !visible);
-        element.classList.toggle('flex', visible);
-        element.setAttribute('aria-hidden', String(!visible));
-        element.tabIndex = visible ? 0 : -1;
-    };
-
     if (slides.length > 1) {
         let currentIndex = 0;
         let autoplayTimer;
         let slideshowPaused = false;
+
+        const updateMuteButton = () => {
+            if (!(muteButton instanceof HTMLButtonElement)) {
+                return;
+            }
+
+            // Only show the speaker button when the active slide has a real <video>.
+            const video = slides[currentIndex].querySelector('video');
+            const hasVideo = video instanceof HTMLVideoElement;
+
+            muteButton.classList.toggle('hidden', !hasVideo);
+            muteButton.classList.toggle('flex', hasVideo);
+            muteButton.setAttribute('aria-hidden', String(!hasVideo));
+            muteButton.tabIndex = hasVideo ? 0 : -1;
+
+            if (hasVideo) {
+                muteButton.setAttribute('aria-label', video.muted ? 'Unmute animation' : 'Mute animation');
+                muteButton.querySelector('[data-icon-muted]')?.classList.toggle('hidden', !video.muted);
+                muteButton.querySelector('[data-icon-unmuted]')?.classList.toggle('hidden', video.muted);
+            }
+        };
 
         const showSlide = (index) => {
             currentIndex = (index + slides.length) % slides.length;
@@ -62,19 +74,7 @@ if (homeSlider instanceof HTMLElement) {
                 }
             });
 
-            // Only treat the slide as a video slide if a real <video> element exists.
-            const activeVideo = slides[currentIndex].querySelector('video');
-            const hasActiveVideo = activeVideo instanceof HTMLVideoElement;
-
-            if (muteButton instanceof HTMLButtonElement) {
-                setVisible(muteButton, hasActiveVideo);
-
-                if (hasActiveVideo) {
-                    muteButton.setAttribute('aria-label', activeVideo.muted ? 'Unmute animation' : 'Mute animation');
-                    muteButton.querySelector('[data-icon-muted]')?.classList.toggle('hidden', !activeVideo.muted);
-                    muteButton.querySelector('[data-icon-unmuted]')?.classList.toggle('hidden', activeVideo.muted);
-                }
-            }
+            updateMuteButton();
 
             indicators.forEach((indicator, indicatorIndex) => {
                 const active = indicatorIndex === currentIndex;
@@ -122,7 +122,7 @@ if (homeSlider instanceof HTMLElement) {
             const video = slides[currentIndex].querySelector('video');
             if (video instanceof HTMLVideoElement) {
                 video.muted = !video.muted;
-                showSlide(currentIndex);
+                updateMuteButton();
             }
         });
 
