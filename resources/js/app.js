@@ -29,6 +29,15 @@ if (homeSlider instanceof HTMLElement) {
     const muteButton = homeSlider.querySelector('[data-slide-mute]');
     const togglePlayButton = homeSlider.querySelector('[data-slide-toggle-play]');
 
+    // Show/hide a control reliably (toggles both `hidden` and `flex`
+    // so the two Tailwind classes never fight each other).
+    const setVisible = (element, visible) => {
+        element.classList.toggle('hidden', !visible);
+        element.classList.toggle('flex', visible);
+        element.setAttribute('aria-hidden', String(!visible));
+        element.tabIndex = visible ? 0 : -1;
+    };
+
     if (slides.length > 1) {
         let currentIndex = 0;
         let autoplayTimer;
@@ -45,7 +54,7 @@ if (homeSlider instanceof HTMLElement) {
 
                 const video = slide.querySelector('video');
                 if (video instanceof HTMLVideoElement) {
-                    if (active && !slideshowPaused && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    if (active && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                         video.play().catch(() => {});
                     } else {
                         video.pause();
@@ -58,10 +67,7 @@ if (homeSlider instanceof HTMLElement) {
             const hasActiveVideo = activeVideo instanceof HTMLVideoElement;
 
             if (muteButton instanceof HTMLButtonElement) {
-                muteButton.classList.toggle('hidden', !hasActiveVideo);
-                muteButton.classList.toggle('flex', hasActiveVideo);
-                muteButton.setAttribute('aria-hidden', String(!hasActiveVideo));
-                muteButton.tabIndex = hasActiveVideo ? 0 : -1;
+                setVisible(muteButton, hasActiveVideo);
 
                 if (hasActiveVideo) {
                     muteButton.setAttribute('aria-label', activeVideo.muted ? 'Unmute animation' : 'Mute animation');
@@ -132,7 +138,7 @@ if (homeSlider instanceof HTMLElement) {
             togglePlayButton.classList.toggle('bg-emerald-950/70', slideshowPaused);
             togglePlayButton.classList.toggle('text-white', slideshowPaused);
             togglePlayButton.classList.toggle('hover:bg-emerald-900', slideshowPaused);
-            showSlide(currentIndex);
+
             if (slideshowPaused) {
                 stopAutoplay();
             } else {

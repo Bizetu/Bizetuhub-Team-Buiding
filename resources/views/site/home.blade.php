@@ -1,21 +1,30 @@
 @extends('layouts.site', ['title' => 'People. Culture. Growth.'])
 @section('content')
 <main>
+    @php
+        // A slide counts as a video only if it has an uploaded animation file,
+        // or a pasted URL that points straight at a playable file (not YouTube/Vimeo).
+        $slideVideo = function ($slide): ?string {
+            $uploaded = $slide->file('animation');
+            if (filled($uploaded)) {
+                return $uploaded;
+            }
+
+            $linked = (string) $slide->video_url;
+
+            return preg_match('/\.(mp4|webm|ogv|mov|m4v)(\?.*)?$/i', $linked) ? $linked : null;
+        };
+        $hasAnimation = $homeSlides->contains(fn ($slide) => filled($slideVideo($slide)));
+        $firstSlideHasVideo = $homeSlides->isNotEmpty() && filled($slideVideo($homeSlides->first()));
+    @endphp
+
     <section class="relative isolate overflow-hidden bg-emerald-950 text-white" aria-label="Featured">
         <div data-home-slider data-autoplay="{{ $homeSlides->count() > 1 ? 'true' : 'false' }}" class="relative">
             @forelse($homeSlides as $index => $slide)
                 @php
                     $background = $slide->image('background', 'default', [], true);
                     $background = $background ?: $slide->image_url;
-
-                    // An uploaded file is trusted. A pasted URL only counts as a video
-                    // if it points straight at a playable file (not YouTube, Vimeo, etc.).
-                    $uploadedVideo = $slide->file('animation');
-                    $linkedVideo = $slide->video_url;
-                    $linkedIsDirect = filled($linkedVideo)
-                        && preg_match('/\.(mp4|webm|ogv|mov|m4v)(\?.*)?$/i', (string) $linkedVideo);
-                    $animationVideo = $uploadedVideo ?: ($linkedIsDirect ? $linkedVideo : null);
-
+                    $animationVideo = $slideVideo($slide);
                     $slideTitle = (string) $slide->title;
                 @endphp
                 <article data-home-slide data-has-video="{{ $animationVideo ? 'true' : 'false' }}" class="relative isolate flex min-h-[500px] items-center overflow-hidden sm:min-h-[520px] {{ $index === 0 ? '' : 'hidden' }}" aria-hidden="{{ $index === 0 ? 'false' : 'true' }}" aria-roledescription="slide" aria-label="{{ $index + 1 }} of {{ $homeSlides->count() }}">
@@ -28,7 +37,7 @@
                     @endif
                     <div class="absolute inset-0 -z-10 bg-gradient-to-r from-emerald-950/85 via-emerald-950/60 to-transparent" aria-hidden="true"></div>
                     <div class="absolute inset-0 -z-10 bg-gradient-to-t from-emerald-950/25 via-transparent to-emerald-950/10" aria-hidden="true"></div>
-                    <div class="mx-auto w-full max-w-7xl px-6 py-14 sm:px-8 sm:py-16">
+                    <div class="mx-auto w-full max-w-7xl px-6 pb-28 pt-14 sm:px-8 sm:py-16">
                         <div class="max-w-[620px]">
                             <div class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-xs font-extrabold uppercase tracking-[0.2em] text-amber-300 backdrop-blur">
                                 <span class="h-2 w-2 rounded-full bg-amber-400"></span>{{ $slide->eyebrow ?: 'Nairobi · Kenya' }}
@@ -74,17 +83,19 @@
 
             @if($homeSlides->count() > 1)
                 <div class="pointer-events-none absolute inset-x-0 bottom-5 z-20 px-6">
-                    <div class="relative mx-auto flex max-w-7xl items-center justify-center">
-                        <div class="pointer-events-auto flex items-center gap-2" aria-label="Choose a featured slide">
+                    <div class="relative mx-auto flex max-w-7xl flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                        <div class="pointer-events-auto flex items-center gap-2" role="group" aria-label="Choose a featured slide">
                             @foreach($homeSlides as $index => $slide)
                                 <button type="button" data-slide-to="{{ $index }}" aria-label="Show slide {{ $index + 1 }}" aria-pressed="{{ $index === 0 ? 'true' : 'false' }}" class="h-2.5 rounded-full border border-amber-300/80 transition-all {{ $index === 0 ? 'w-8 bg-amber-400' : 'w-2.5 bg-transparent' }}"></button>
                             @endforeach
                         </div>
-                        <div class="pointer-events-auto absolute right-0 flex items-center gap-3">
-                            <button type="button" data-slide-mute aria-label="Unmute animation" class="hidden h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-emerald-950 shadow-md transition hover:bg-amber-300" title="Mute or unmute animation" aria-hidden="true" tabindex="-1">
+                        <div class="pointer-events-auto flex items-center gap-3 sm:absolute sm:right-0">
+                            @if($hasAnimation)
+                                <button type="button" data-slide-mute aria-label="Unmute animation" class="{{ $firstSlideHasVideo ? 'flex' : 'hidden' }} h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-emerald-950 shadow-md transition hover:bg-amber-300" title="Mute or unmute animation" aria-hidden="{{ $firstSlideHasVideo ? 'false' : 'true' }}" @unless($firstSlideHasVideo) tabindex="-1" @endunless>
                                     <svg data-icon-muted viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="m17 9 4 6m0-6-4 6"/></svg>
                                     <svg data-icon-unmuted viewBox="0 0 24 24" class="hidden h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7m3-10a9 9 0 0 1 0 13"/></svg>
-                            </button>
+                                </button>
+                            @endif
                             <button type="button" data-slide-toggle-play aria-label="Pause slideshow" aria-pressed="false" class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-emerald-950 shadow-md transition hover:bg-amber-300" title="Pause or resume slideshow">
                                 <svg data-icon-pause viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
                                 <svg data-icon-play viewBox="0 0 24 24" class="hidden h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
@@ -185,10 +196,10 @@
                 </div>
                 <a href="{{ route('services') }}" class="hidden text-sm font-extrabold text-emerald-800 md:block">View all services <span aria-hidden="true">→</span></a>
             </div>
-            <div class="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3" aria-label="Featured services">
+            <div class="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3" role="list" aria-label="Featured services">
                 @foreach($services as $service)
                     @php($cover = $service->image('cover', 'default', [], true))
-                    <article class="service-glass-card group relative flex min-h-[400px] flex-col justify-between overflow-hidden rounded-3xl">
+                    <article role="listitem" class="service-glass-card group relative flex min-h-[400px] flex-col justify-between overflow-hidden rounded-3xl">
                         @if($cover)
                             <img src="{{ $cover }}" alt="{{ $service->imageAltText('cover') ?: $service->title }}" class="service-card-image absolute inset-0 h-full w-full object-cover" loading="lazy">
                         @else
@@ -226,7 +237,7 @@
                 <a class="hidden text-sm font-extrabold text-emerald-800 md:block" href="{{ route('events') }}">View all events <span aria-hidden="true">→</span></a>
             </div>
             <div class="mt-10 grid gap-8 md:grid-cols-3">
-                @forelse($events as $event)
+                @foreach($events as $event)
                     @php($eventImage = $event->image('card', 'default', [], true))
                     <article class="flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#112B24] text-white shadow-xl shadow-black/20">
                         @if($eventImage)
@@ -239,18 +250,16 @@
                         @endif
                         <div class="flex flex-1 flex-col p-5">
                             <h3 class="text-xl font-bold leading-snug"><a href="{{ route('events.show', $event) }}" class="hover:text-amber-300">{{ $event->title }}</a></h3>
-                            <p class="mt-3 flex-1 text-sm leading-relaxed text-[#C7D8D2]">{{ \Illuminate\Support\Str::limit(strip_tags($event->description), 180) }}</p>
+                            <p class="mt-3 flex-1 text-sm leading-relaxed text-[#C7D8D2]">{{ \Illuminate\Support\Str::limit(strip_tags((string) $event->description), 180) }}</p>
                             <a href="{{ route('events.show', $event) }}" class="mt-4 self-start text-sm font-bold text-amber-300 underline underline-offset-4">Read more</a>
-                                <div class="mt-4 flex flex-col gap-3 border-t border-white/10 pt-4 text-sm text-[#C7D8D2]">
+                            <div class="mt-4 flex flex-col gap-3 border-t border-white/10 pt-4 text-sm text-[#C7D8D2]">
                                 @if($event->venue)<div>Location: <strong class="font-semibold text-white">{{ $event->venue }}</strong></div>@endif
                                 @if($event->fee !== null)<div>Fee: <strong class="font-semibold text-white">KES {{ number_format((float) $event->fee, 0) }}</strong></div>@endif
                                 @if($event->capacity)<div>Capacity: <strong class="font-semibold text-white">Up to {{ number_format($event->capacity) }} Participants</strong></div>@endif
                             </div>
                         </div>
                     </article>
-                @empty
-                    <p class="text-slate-600">New public events are coming soon.</p>
-                @endforelse
+                @endforeach
             </div>
         </section>
     @endif
@@ -263,9 +272,12 @@
                 @if($testimonialsHeading->translatedWysiwyg('text'))<div class="prose prose-slate mt-3">{!! $testimonialsHeading->translatedWysiwyg('text') !!}</div>@endif
                 <div class="mt-10 grid gap-8 md:grid-cols-3">
                     @foreach($testimonials as $testimonial)
+                        @php($rating = max(0, min(5, (int) $testimonial->rating)))
                         <figure class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-                            <div class="text-amber-500" aria-label="{{ $testimonial->rating }} out of 5 stars">{{ str_repeat('★', $testimonial->rating) }}</div>
-                            <blockquote class="mt-4 text-lg leading-7 text-slate-700">“{{ strip_tags($testimonial->description) }}”</blockquote>
+                            @if($rating > 0)
+                                <div class="text-amber-500" role="img" aria-label="{{ $rating }} out of 5 stars">{{ str_repeat('★', $rating) }}</div>
+                            @endif
+                            <blockquote class="mt-4 text-lg leading-7 text-slate-700">“{{ strip_tags((string) $testimonial->description) }}”</blockquote>
                             <figcaption class="mt-7 border-t border-slate-200 pt-5 text-sm font-bold">{{ $testimonial->client ?: $testimonial->title }}</figcaption>
                         </figure>
                     @endforeach
