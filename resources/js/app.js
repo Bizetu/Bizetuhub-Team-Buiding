@@ -53,9 +53,9 @@ if (homeSlider instanceof HTMLElement) {
                 }
             });
 
-            // Only treat the slide as a video slide if a real <video> element exists.
             const activeVideo = slides[currentIndex].querySelector('video');
-            const hasActiveVideo = activeVideo instanceof HTMLVideoElement;
+            const hasActiveVideo = slides[currentIndex].dataset.hasVideo === 'true'
+                && activeVideo instanceof HTMLVideoElement;
 
             if (muteButton instanceof HTMLButtonElement) {
                 muteButton.classList.toggle('hidden', !hasActiveVideo);

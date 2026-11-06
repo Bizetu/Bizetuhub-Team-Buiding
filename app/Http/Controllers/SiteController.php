@@ -30,13 +30,21 @@ class SiteController extends Controller
             ->with('blocks')
             ->first();
 
+        $homeSlides = HomeSlide::where('published', true)
+            ->with(['medias', 'files'])
+            ->orderBy('position')
+            ->orderBy('id')
+            ->get()
+            ->each(function (HomeSlide $slide): void {
+                $slide->setAttribute(
+                    'has_animation_video',
+                    filled($slide->file('animation')) || filled($slide->video_url)
+                );
+            });
+
         return view('site.home', [
             'homePage' => $homePage,
-            'homeSlides' => HomeSlide::where('published', true)
-                ->with(['medias', 'files'])
-                ->orderBy('position')
-                ->orderBy('id')
-                ->get(),
+            'homeSlides' => $homeSlides,
             'services' => Service::where('published', true)
                 ->with('medias')
                 ->orderByDesc('featured')
