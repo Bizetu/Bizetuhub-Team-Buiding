@@ -650,38 +650,6 @@ if (proposalDialog instanceof HTMLDialogElement) {
 
 </script>
 
-<script>
-    (() => {
-        const homeSlider = document.querySelector('[data-home-slider]');
-        const muteButton = homeSlider?.querySelector('[data-slide-mute]');
-
-        if (!(homeSlider instanceof HTMLElement) || !(muteButton instanceof HTMLButtonElement)) {
-            return;
-        }
-
-        const updateMuteButton = () => {
-            const video = document.getElementById('bg_video');
-            const videoSlide = video?.closest('[data-home-slide]');
-            const videoSlideIsVisible = videoSlide instanceof HTMLElement
-                && !videoSlide.classList.contains('hidden')
-                && videoSlide.getAttribute('aria-hidden') !== 'true';
-
-            muteButton.classList.toggle('hidden', !videoSlideIsVisible);
-            muteButton.classList.toggle('flex', videoSlideIsVisible);
-            muteButton.setAttribute('aria-hidden', String(!videoSlideIsVisible));
-            muteButton.tabIndex = videoSlideIsVisible ? 0 : -1;
-        };
-
-        updateMuteButton();
-
-        new MutationObserver(updateMuteButton).observe(homeSlider, {
-            attributes: true,
-            attributeFilter: ['class', 'aria-hidden'],
-            subtree: true,
-        });
-    })();
-</script>
-
 @endsection
 
 
