@@ -90,8 +90,12 @@
                                 <svg data-icon-pause viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
                                 <svg data-icon-play viewBox="0 0 24 24" class="hidden h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                             </button>
-                            <button type="button" data-slide-previous aria-label="Previous slide" class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-lg text-emerald-950 transition hover:bg-amber-300">←</button>
-                            <button type="button" data-slide-next aria-label="Next slide" class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-lg text-emerald-950 transition hover:bg-amber-300">→</button>
+                            <button type="button" data-slide-previous aria-label="Previous slide" class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-emerald-950 shadow-md transition hover:bg-amber-300">
+                                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                            </button>
+                            <button type="button" data-slide-next aria-label="Next slide" class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-emerald-950 shadow-md transition hover:bg-amber-300">
+                                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                            </button>
                         </div>
                     </div>
                 </div>

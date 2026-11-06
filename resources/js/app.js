@@ -136,6 +136,12 @@ if (homeSlider instanceof HTMLElement) {
             togglePlayButton.setAttribute('aria-label', slideshowPaused ? 'Resume slideshow' : 'Pause slideshow');
             togglePlayButton.querySelector('[data-icon-pause]')?.classList.toggle('hidden', slideshowPaused);
             togglePlayButton.querySelector('[data-icon-play]')?.classList.toggle('hidden', !slideshowPaused);
+            togglePlayButton.classList.toggle('bg-amber-400', !slideshowPaused);
+            togglePlayButton.classList.toggle('text-emerald-950', !slideshowPaused);
+            togglePlayButton.classList.toggle('hover:bg-amber-300', !slideshowPaused);
+            togglePlayButton.classList.toggle('bg-emerald-950/70', slideshowPaused);
+            togglePlayButton.classList.toggle('text-white', slideshowPaused);
+            togglePlayButton.classList.toggle('hover:bg-emerald-900', slideshowPaused);
             showSlide(currentIndex);
             if (slideshowPaused) {
                 stopAutoplay();
