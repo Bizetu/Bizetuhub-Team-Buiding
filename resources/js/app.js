@@ -53,18 +53,22 @@ if (homeSlider instanceof HTMLElement) {
                 }
             });
 
-            // Only treat the slide as a video slide if a real <video> element exists.
-            const activeVideo = slides[currentIndex].querySelector('video');
-            const hasActiveVideo = activeVideo instanceof HTMLVideoElement;
+            const activeSlide = slides[currentIndex];
+            const activeVideo = activeSlide.querySelector('video');
+            const hasActiveVideo = activeSlide.dataset.hasVideo === 'true'
+                || activeVideo instanceof HTMLVideoElement;
+
+            if (togglePlayButton instanceof HTMLButtonElement) {
+                togglePlayButton.classList.toggle('hidden', !hasActiveVideo);
+                togglePlayButton.setAttribute('aria-hidden', String(!hasActiveVideo));
+            }
 
             if (muteButton instanceof HTMLButtonElement) {
                 muteButton.classList.toggle('hidden', !hasActiveVideo);
-                muteButton.classList.toggle('flex', hasActiveVideo);
                 muteButton.setAttribute('aria-hidden', String(!hasActiveVideo));
-                muteButton.tabIndex = hasActiveVideo ? 0 : -1;
 
                 if (hasActiveVideo) {
-                    muteButton.setAttribute('aria-label', activeVideo.muted ? 'Unmute animation' : 'Mute animation');
+                    muteButton.setAttribute('aria-label', !activeVideo.muted ? 'Mute animation' : 'Unmute animation');
                     muteButton.querySelector('[data-icon-muted]')?.classList.toggle('hidden', !activeVideo.muted);
                     muteButton.querySelector('[data-icon-unmuted]')?.classList.toggle('hidden', activeVideo.muted);
                 }
@@ -81,23 +85,6 @@ if (homeSlider instanceof HTMLElement) {
 
             if (currentIndicator instanceof HTMLElement) {
                 currentIndicator.textContent = String(currentIndex + 1).padStart(2, '0');
-            }
-        };
-
-        const stopAutoplay = () => {
-            window.clearInterval(autoplayTimer);
-        };
-
-        const startAutoplay = () => {
-            stopAutoplay();
-
-            if (
-                homeSlider.dataset.autoplay === 'true'
-                && !slideshowPaused
-                && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-                && document.visibilityState === 'visible'
-            ) {
-                autoplayTimer = window.setInterval(() => showSlide(currentIndex + 1), 6000);
             }
         };
 
@@ -126,12 +113,6 @@ if (homeSlider instanceof HTMLElement) {
             togglePlayButton.setAttribute('aria-label', slideshowPaused ? 'Resume slideshow' : 'Pause slideshow');
             togglePlayButton.querySelector('[data-icon-pause]')?.classList.toggle('hidden', slideshowPaused);
             togglePlayButton.querySelector('[data-icon-play]')?.classList.toggle('hidden', !slideshowPaused);
-            togglePlayButton.classList.toggle('bg-amber-400', !slideshowPaused);
-            togglePlayButton.classList.toggle('text-emerald-950', !slideshowPaused);
-            togglePlayButton.classList.toggle('hover:bg-amber-300', !slideshowPaused);
-            togglePlayButton.classList.toggle('bg-emerald-950/70', slideshowPaused);
-            togglePlayButton.classList.toggle('text-white', slideshowPaused);
-            togglePlayButton.classList.toggle('hover:bg-emerald-900', slideshowPaused);
             showSlide(currentIndex);
             if (slideshowPaused) {
                 stopAutoplay();
@@ -139,6 +120,22 @@ if (homeSlider instanceof HTMLElement) {
                 startAutoplay();
             }
         });
+
+        const stopAutoplay = () => {
+            window.clearInterval(autoplayTimer);
+        };
+        const startAutoplay = () => {
+            stopAutoplay();
+
+            if (
+                homeSlider.dataset.autoplay === 'true'
+                && !slideshowPaused
+                && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                && document.visibilityState === 'visible'
+            ) {
+                autoplayTimer = window.setInterval(() => showSlide(currentIndex + 1), 6000);
+            }
+        };
 
         homeSlider.addEventListener('mouseenter', stopAutoplay);
         homeSlider.addEventListener('mouseleave', startAutoplay);
