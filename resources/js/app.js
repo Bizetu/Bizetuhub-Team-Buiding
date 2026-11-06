@@ -55,7 +55,7 @@ if (homeSlider instanceof HTMLElement) {
 
             const activeVideo = slides[currentIndex].querySelector('video');
             const hasActiveVideo = slides[currentIndex].dataset.hasVideo === 'true'
-                && activeVideo instanceof HTMLVideoElement;
+                || activeVideo instanceof HTMLVideoElement;
 
             if (muteButton instanceof HTMLButtonElement) {
                 muteButton.classList.toggle('hidden', !hasActiveVideo);
@@ -63,7 +63,7 @@ if (homeSlider instanceof HTMLElement) {
                 muteButton.setAttribute('aria-hidden', String(!hasActiveVideo));
                 muteButton.tabIndex = hasActiveVideo ? 0 : -1;
 
-                if (hasActiveVideo) {
+                if (hasActiveVideo && activeVideo instanceof HTMLVideoElement) {
                     muteButton.setAttribute('aria-label', activeVideo.muted ? 'Unmute animation' : 'Mute animation');
                     muteButton.querySelector('[data-icon-muted]')?.classList.toggle('hidden', !activeVideo.muted);
                     muteButton.querySelector('[data-icon-unmuted]')?.classList.toggle('hidden', activeVideo.muted);
