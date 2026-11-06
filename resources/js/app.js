@@ -34,27 +34,6 @@ if (homeSlider instanceof HTMLElement) {
         let autoplayTimer;
         let slideshowPaused = false;
 
-        const updateMuteButton = () => {
-            if (!(muteButton instanceof HTMLButtonElement)) {
-                return;
-            }
-
-            // Only show the speaker button when the active slide has a real <video>.
-            const video = slides[currentIndex].querySelector('video');
-            const hasVideo = video instanceof HTMLVideoElement;
-
-            muteButton.classList.toggle('hidden', !hasVideo);
-            muteButton.classList.toggle('flex', hasVideo);
-            muteButton.setAttribute('aria-hidden', String(!hasVideo));
-            muteButton.tabIndex = hasVideo ? 0 : -1;
-
-            if (hasVideo) {
-                muteButton.setAttribute('aria-label', video.muted ? 'Unmute animation' : 'Mute animation');
-                muteButton.querySelector('[data-icon-muted]')?.classList.toggle('hidden', !video.muted);
-                muteButton.querySelector('[data-icon-unmuted]')?.classList.toggle('hidden', video.muted);
-            }
-        };
-
         const showSlide = (index) => {
             currentIndex = (index + slides.length) % slides.length;
 
@@ -66,7 +45,7 @@ if (homeSlider instanceof HTMLElement) {
 
                 const video = slide.querySelector('video');
                 if (video instanceof HTMLVideoElement) {
-                    if (active && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    if (active && !slideshowPaused && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                         video.play().catch(() => {});
                     } else {
                         video.pause();
@@ -74,7 +53,22 @@ if (homeSlider instanceof HTMLElement) {
                 }
             });
 
-            updateMuteButton();
+            // Only treat the slide as a video slide if a real <video> element exists.
+            const activeVideo = slides[currentIndex].querySelector('video');
+            const hasActiveVideo = activeVideo instanceof HTMLVideoElement;
+
+            if (muteButton instanceof HTMLButtonElement) {
+                muteButton.classList.toggle('hidden', !hasActiveVideo);
+                muteButton.classList.toggle('flex', hasActiveVideo);
+                muteButton.setAttribute('aria-hidden', String(!hasActiveVideo));
+                muteButton.tabIndex = hasActiveVideo ? 0 : -1;
+
+                if (hasActiveVideo) {
+                    muteButton.setAttribute('aria-label', activeVideo.muted ? 'Unmute animation' : 'Mute animation');
+                    muteButton.querySelector('[data-icon-muted]')?.classList.toggle('hidden', !activeVideo.muted);
+                    muteButton.querySelector('[data-icon-unmuted]')?.classList.toggle('hidden', activeVideo.muted);
+                }
+            }
 
             indicators.forEach((indicator, indicatorIndex) => {
                 const active = indicatorIndex === currentIndex;
@@ -122,7 +116,7 @@ if (homeSlider instanceof HTMLElement) {
             const video = slides[currentIndex].querySelector('video');
             if (video instanceof HTMLVideoElement) {
                 video.muted = !video.muted;
-                updateMuteButton();
+                showSlide(currentIndex);
             }
         });
 
@@ -138,7 +132,7 @@ if (homeSlider instanceof HTMLElement) {
             togglePlayButton.classList.toggle('bg-emerald-950/70', slideshowPaused);
             togglePlayButton.classList.toggle('text-white', slideshowPaused);
             togglePlayButton.classList.toggle('hover:bg-emerald-900', slideshowPaused);
-
+            showSlide(currentIndex);
             if (slideshowPaused) {
                 stopAutoplay();
             } else {
