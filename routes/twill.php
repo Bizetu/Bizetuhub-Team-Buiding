@@ -10,6 +10,7 @@ TwillRoutes::module('events');
 TwillRoutes::module('menuItems');
 TwillRoutes::module('menuTypes');
 TwillRoutes::module('galleryItems');
+TwillRoutes::module('galleryCategories');
 TwillRoutes::module('bookings');
 TwillRoutes::module('enquiries');
 TwillRoutes::module('contactInterests');

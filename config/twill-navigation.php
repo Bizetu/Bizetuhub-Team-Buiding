@@ -24,7 +24,13 @@ return [
         ],
     ],
     'events' => ['title' => 'Events'],
-    'galleryItems' => ['title' => 'Gallery'],
+    'galleryItems' => [
+        'title' => 'Gallery',
+        'primary_navigation' => [
+            'galleryItems' => ['title' => 'Gallery', 'module' => true],
+            'galleryCategories' => ['title' => 'Gallery categories', 'module' => true],
+        ],
+    ],
     'bookings' => ['title' => 'Booking requests'],
     'enquiries' => [
         'title' => 'Contact',
