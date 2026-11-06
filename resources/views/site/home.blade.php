@@ -72,7 +72,7 @@
                             @endforeach
                         </div>
                         <div class="pointer-events-auto absolute right-0 flex items-center gap-3">
-                            <button type="button" data-slide-mute aria-label="Unmute animation" class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-emerald-950 shadow-md transition hover:bg-amber-300" title="Mute or unmute animation">
+                            <button type="button" data-slide-mute aria-label="Unmute animation" class="hidden h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-emerald-950 shadow-md transition hover:bg-amber-300" title="Mute or unmute animation" aria-hidden="true" tabindex="-1">
                                     <svg data-icon-muted viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="m17 9 4 6m0-6-4 6"/></svg>
                                     <svg data-icon-unmuted viewBox="0 0 24 24" class="hidden h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7m3-10a9 9 0 0 1 0 13"/></svg>
                             </button>

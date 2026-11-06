@@ -58,6 +58,11 @@ if (homeSlider instanceof HTMLElement) {
             const hasActiveVideo = activeVideo instanceof HTMLVideoElement;
 
             if (muteButton instanceof HTMLButtonElement) {
+                muteButton.classList.toggle('hidden', !hasActiveVideo);
+                muteButton.classList.toggle('flex', hasActiveVideo);
+                muteButton.setAttribute('aria-hidden', String(!hasActiveVideo));
+                muteButton.tabIndex = hasActiveVideo ? 0 : -1;
+
                 if (hasActiveVideo) {
                     muteButton.setAttribute('aria-label', activeVideo.muted ? 'Unmute animation' : 'Mute animation');
                     muteButton.querySelector('[data-icon-muted]')?.classList.toggle('hidden', !activeVideo.muted);
