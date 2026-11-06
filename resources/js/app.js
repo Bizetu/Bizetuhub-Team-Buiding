@@ -53,8 +53,10 @@ if (homeSlider instanceof HTMLElement) {
                 }
             });
 
-            const activeVideo = slides[currentIndex].querySelector('video');
-            const hasActiveVideo = activeVideo instanceof HTMLVideoElement;
+            const activeSlide = slides[currentIndex];
+            const activeVideo = activeSlide.querySelector('video');
+            const hasActiveVideo = activeSlide.dataset.hasVideo === 'true'
+                || activeVideo instanceof HTMLVideoElement;
 
             if (togglePlayButton instanceof HTMLButtonElement) {
                 togglePlayButton.classList.toggle('hidden', !hasActiveVideo);

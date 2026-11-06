@@ -9,7 +9,7 @@
                     $background = $background ?: $slide->image_url;
                     $animationVideo = $slide->file('animation') ?: $slide->video_url;
                 @endphp
-                <article data-home-slide class="relative isolate flex min-h-[500px] items-center overflow-hidden sm:min-h-[520px] {{ $index === 0 ? '' : 'hidden' }}" aria-hidden="{{ $index === 0 ? 'false' : 'true' }}" aria-roledescription="slide" aria-label="{{ $index + 1 }} of {{ $homeSlides->count() }}">
+                <article data-home-slide data-has-video="{{ $animationVideo ? 'true' : 'false' }}" class="relative isolate flex min-h-[500px] items-center overflow-hidden sm:min-h-[520px] {{ $index === 0 ? '' : 'hidden' }}" aria-hidden="{{ $index === 0 ? 'false' : 'true' }}" aria-roledescription="slide" aria-label="{{ $index + 1 }} of {{ $homeSlides->count() }}">
                     @if($animationVideo)
                         <video src="{{ $animationVideo }}" @if($background) poster="{{ $background }}" @endif class="absolute inset-0 -z-20 h-full w-full object-cover" muted loop playsinline preload="metadata" aria-hidden="true" @if($index > 0) tabindex="-1" @endif></video>
                     @elseif($background)
@@ -68,6 +68,9 @@
                     $hasAnimation = $homeSlides->contains(
                         fn ($slide) => filled($slide->file('animation')) || filled($slide->video_url)
                     );
+                    $firstSlideHasVideo = $homeSlides->first()
+                        ? (filled($homeSlides->first()->file('animation')) || filled($homeSlides->first()->video_url))
+                        : false;
                 @endphp
                 <div class="pointer-events-none absolute inset-x-0 bottom-5 z-20 px-6">
                     <div class="relative mx-auto flex max-w-7xl items-center justify-center">
@@ -83,7 +86,7 @@
                                     <svg data-icon-unmuted viewBox="0 0 24 24" class="hidden h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7m3-10a9 9 0 0 1 0 13"/></svg>
                                 </button>
                             @endif
-                            <button type="button" data-slide-toggle-play aria-label="Pause slideshow" aria-pressed="false" class="hidden flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-emerald-950 shadow-md transition hover:bg-amber-300" title="Pause or resume slideshow" aria-hidden="true">
+                            <button type="button" data-slide-toggle-play aria-label="Pause slideshow" aria-pressed="false" class="{{ $firstSlideHasVideo ? '' : 'hidden' }} flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-emerald-950 shadow-md transition hover:bg-amber-300" title="Pause or resume slideshow" aria-hidden="{{ $firstSlideHasVideo ? 'false' : 'true' }}">
                                 <svg data-icon-pause viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
                                 <svg data-icon-play viewBox="0 0 24 24" class="hidden h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                             </button>
