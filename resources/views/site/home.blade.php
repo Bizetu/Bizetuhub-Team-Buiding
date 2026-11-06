@@ -7,18 +7,20 @@
                 @php
                     $background = $slide->image('background', 'default', [], true);
                     $background = $background ?: $slide->image_url;
-                    $animationVideo = $slide->file('animation') ?: $slide->video_url;
+
+                    // An uploaded file is trusted. A pasted URL only counts as a video
+                    // if it points straight at a playable file (not YouTube, Vimeo, etc.).
+                    $uploadedVideo = $slide->file('animation');
+                    $linkedVideo = $slide->video_url;
+                    $linkedIsDirect = filled($linkedVideo)
+                        && preg_match('/\.(mp4|webm|ogv|mov|m4v)(\?.*)?$/i', (string) $linkedVideo);
+                    $animationVideo = $uploadedVideo ?: ($linkedIsDirect ? $linkedVideo : null);
+
+                    $slideTitle = (string) $slide->title;
                 @endphp
                 <article data-home-slide data-has-video="{{ $animationVideo ? 'true' : 'false' }}" class="relative isolate flex min-h-[500px] items-center overflow-hidden sm:min-h-[520px] {{ $index === 0 ? '' : 'hidden' }}" aria-hidden="{{ $index === 0 ? 'false' : 'true' }}" aria-roledescription="slide" aria-label="{{ $index + 1 }} of {{ $homeSlides->count() }}">
                     @if($animationVideo)
-
-<video id="video" controls preload="metadata">
-   <source src="resources/myvideo.mp4" type="video/mp4">
-   <source src="resources/myvideo.webm" type="video/webm">
-   <track label="English" kind="captions" srclang="en" src="resources/myvideo-en.vtt" default>
-   <track label="Deutsch" kind="captions" srclang="de" src="resources/myvideo-de.vtt">
-   <track label="Español" kind="captions" srclang="es" src="resources/myvideo-es.vtt">
-</video>
+                        <video src="{{ $animationVideo }}" @if($background) poster="{{ $background }}" @endif class="absolute inset-0 -z-20 h-full w-full object-cover" muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1"></video>
                     @elseif($background)
                         <img src="{{ $background }}" alt="{{ $slide->imageAltText('background') }}" class="absolute inset-0 -z-20 h-full w-full object-cover" @if($index > 0) loading="lazy" @else fetchpriority="high" @endif>
                     @else
@@ -32,10 +34,10 @@
                                 <span class="h-2 w-2 rounded-full bg-amber-400"></span>{{ $slide->eyebrow ?: 'Nairobi · Kenya' }}
                             </div>
                             <h1 class="mt-5 max-w-[600px] text-5xl font-black leading-[1.02] tracking-tight sm:mt-6 sm:text-6xl md:text-7xl">
-                                @if(\Illuminate\Support\Str::endsWith($slide->title, 'Become.'))
-                                    {{ \Illuminate\Support\Str::beforeLast($slide->title, 'Become.') }}<span class="block text-amber-400">Become.</span>
+                                @if(\Illuminate\Support\Str::endsWith($slideTitle, 'Become.'))
+                                    {{ \Illuminate\Support\Str::beforeLast($slideTitle, 'Become.') }}<span class="block text-amber-400">Become.</span>
                                 @else
-                                    {{ $slide->title }}
+                                    {{ $slideTitle }}
                                 @endif
                             </h1>
                             @if($slide->description)
@@ -53,7 +55,7 @@
                     </div>
                 </article>
             @empty
-                <article data-home-slide class="relative isolate flex min-h-[500px] items-center overflow-hidden sm:min-h-[520px]" aria-roledescription="slide" aria-label="1 of 1">
+                <article data-home-slide data-has-video="false" class="relative isolate flex min-h-[500px] items-center overflow-hidden sm:min-h-[520px]" aria-roledescription="slide" aria-label="1 of 1">
                     <div class="absolute inset-0 -z-20" aria-hidden="true" style="background: radial-gradient(ellipse at 82% 24%, rgba(37,128,84,.6), transparent 38%), radial-gradient(ellipse at 8% 85%, rgba(7,91,234,.2), transparent 42%), #071f17;"></div>
                     <div class="absolute inset-0 -z-10 bg-gradient-to-r from-emerald-950/80 via-emerald-950/60 to-emerald-950/20" aria-hidden="true"></div>
                     <div class="mx-auto w-full max-w-7xl px-6 py-14 sm:px-8 sm:py-16">
