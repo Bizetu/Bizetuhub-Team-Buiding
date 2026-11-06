@@ -29,6 +29,15 @@ if (homeSlider instanceof HTMLElement) {
     const muteButton = homeSlider.querySelector('[data-slide-mute]');
     const togglePlayButton = homeSlider.querySelector('[data-slide-toggle-play]');
 
+    // Show/hide a control reliably (toggles both `hidden` and `flex`
+    // so the two Tailwind classes never fight each other).
+    const setVisible = (element, visible) => {
+        element.classList.toggle('hidden', !visible);
+        element.classList.toggle('flex', visible);
+        element.setAttribute('aria-hidden', String(!visible));
+        element.tabIndex = visible ? 0 : -1;
+    };
+
     if (slides.length > 1) {
         let currentIndex = 0;
         let autoplayTimer;
@@ -53,22 +62,19 @@ if (homeSlider instanceof HTMLElement) {
                 }
             });
 
-            const activeSlide = slides[currentIndex];
-            const activeVideo = activeSlide.querySelector('video');
-            const hasActiveVideo = activeSlide.dataset.hasVideo === 'true'
-                || activeVideo instanceof HTMLVideoElement;
+            // Only treat the slide as a video slide if a real <video> element exists.
+            const activeVideo = slides[currentIndex].querySelector('video');
+            const hasActiveVideo = activeVideo instanceof HTMLVideoElement;
 
             if (togglePlayButton instanceof HTMLButtonElement) {
-                togglePlayButton.classList.toggle('hidden', !hasActiveVideo);
-                togglePlayButton.setAttribute('aria-hidden', String(!hasActiveVideo));
+                setVisible(togglePlayButton, hasActiveVideo);
             }
 
             if (muteButton instanceof HTMLButtonElement) {
-                muteButton.classList.toggle('hidden', !hasActiveVideo);
-                muteButton.setAttribute('aria-hidden', String(!hasActiveVideo));
+                setVisible(muteButton, hasActiveVideo);
 
                 if (hasActiveVideo) {
-                    muteButton.setAttribute('aria-label', !activeVideo.muted ? 'Mute animation' : 'Unmute animation');
+                    muteButton.setAttribute('aria-label', activeVideo.muted ? 'Unmute animation' : 'Mute animation');
                     muteButton.querySelector('[data-icon-muted]')?.classList.toggle('hidden', !activeVideo.muted);
                     muteButton.querySelector('[data-icon-unmuted]')?.classList.toggle('hidden', activeVideo.muted);
                 }
@@ -85,6 +91,23 @@ if (homeSlider instanceof HTMLElement) {
 
             if (currentIndicator instanceof HTMLElement) {
                 currentIndicator.textContent = String(currentIndex + 1).padStart(2, '0');
+            }
+        };
+
+        const stopAutoplay = () => {
+            window.clearInterval(autoplayTimer);
+        };
+
+        const startAutoplay = () => {
+            stopAutoplay();
+
+            if (
+                homeSlider.dataset.autoplay === 'true'
+                && !slideshowPaused
+                && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                && document.visibilityState === 'visible'
+            ) {
+                autoplayTimer = window.setInterval(() => showSlide(currentIndex + 1), 6000);
             }
         };
 
@@ -120,22 +143,6 @@ if (homeSlider instanceof HTMLElement) {
                 startAutoplay();
             }
         });
-
-        const stopAutoplay = () => {
-            window.clearInterval(autoplayTimer);
-        };
-        const startAutoplay = () => {
-            stopAutoplay();
-
-            if (
-                homeSlider.dataset.autoplay === 'true'
-                && !slideshowPaused
-                && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-                && document.visibilityState === 'visible'
-            ) {
-                autoplayTimer = window.setInterval(() => showSlide(currentIndex + 1), 6000);
-            }
-        };
 
         homeSlider.addEventListener('mouseenter', stopAutoplay);
         homeSlider.addEventListener('mouseleave', startAutoplay);
