@@ -54,8 +54,14 @@ if (homeSlider instanceof HTMLElement) {
             });
 
             const activeVideo = slides[currentIndex].querySelector('video');
+            const hasActiveVideo = activeVideo instanceof HTMLVideoElement;
+
+            if (togglePlayButton instanceof HTMLButtonElement) {
+                togglePlayButton.classList.toggle('hidden', !hasActiveVideo);
+                togglePlayButton.setAttribute('aria-hidden', String(!hasActiveVideo));
+            }
+
             if (muteButton instanceof HTMLButtonElement) {
-                const hasActiveVideo = activeVideo instanceof HTMLVideoElement;
                 muteButton.classList.toggle('hidden', !hasActiveVideo);
                 muteButton.setAttribute('aria-hidden', String(!hasActiveVideo));
 
