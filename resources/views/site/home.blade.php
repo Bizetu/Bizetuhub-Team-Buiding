@@ -64,14 +64,6 @@
             @endforelse
 
             @if($homeSlides->count() > 1)
-                @php
-                    $hasAnimation = $homeSlides->contains(
-                        fn ($slide) => filled($slide->file('animation')) || filled($slide->video_url)
-                    );
-                    $firstSlideHasVideo = $homeSlides->first()
-                        ? (filled($homeSlides->first()->file('animation')) || filled($homeSlides->first()->video_url))
-                        : false;
-                @endphp
                 <div class="pointer-events-none absolute inset-x-0 bottom-5 z-20 px-6">
                     <div class="relative mx-auto flex max-w-7xl items-center justify-center">
                         <div class="pointer-events-auto flex items-center gap-2" aria-label="Choose a featured slide">
@@ -80,13 +72,11 @@
                             @endforeach
                         </div>
                         <div class="pointer-events-auto absolute right-0 flex items-center gap-3">
-                            @if($hasAnimation)
-                                <button type="button" data-slide-mute aria-label="Unmute animation" class="{{ $firstSlideHasVideo ? 'flex' : 'hidden' }} h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-emerald-950 shadow-md transition hover:bg-amber-300" title="Mute or unmute animation" aria-hidden="{{ $firstSlideHasVideo ? 'false' : 'true' }}">
+                            <button type="button" data-slide-mute aria-label="Unmute animation" class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-emerald-950 shadow-md transition hover:bg-amber-300" title="Mute or unmute animation">
                                     <svg data-icon-muted viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="m17 9 4 6m0-6-4 6"/></svg>
                                     <svg data-icon-unmuted viewBox="0 0 24 24" class="hidden h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7m3-10a9 9 0 0 1 0 13"/></svg>
-                                </button>
-                            @endif
-                            <button type="button" data-slide-toggle-play aria-label="Pause slideshow" aria-pressed="false" class="{{ $firstSlideHasVideo ? 'flex' : 'hidden' }} h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-emerald-950 shadow-md transition hover:bg-amber-300" title="Pause or resume slideshow" aria-hidden="{{ $firstSlideHasVideo ? 'false' : 'true' }}">
+                            </button>
+                            <button type="button" data-slide-toggle-play aria-label="Pause slideshow" aria-pressed="false" class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-emerald-950 shadow-md transition hover:bg-amber-300" title="Pause or resume slideshow">
                                 <svg data-icon-pause viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
                                 <svg data-icon-play viewBox="0 0 24 24" class="hidden h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                             </button>

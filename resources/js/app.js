@@ -29,15 +29,6 @@ if (homeSlider instanceof HTMLElement) {
     const muteButton = homeSlider.querySelector('[data-slide-mute]');
     const togglePlayButton = homeSlider.querySelector('[data-slide-toggle-play]');
 
-    // Show/hide a control reliably (toggles both `hidden` and `flex`
-    // so the two Tailwind classes never fight each other).
-    const setVisible = (element, visible) => {
-        element.classList.toggle('hidden', !visible);
-        element.classList.toggle('flex', visible);
-        element.setAttribute('aria-hidden', String(!visible));
-        element.tabIndex = visible ? 0 : -1;
-    };
-
     if (slides.length > 1) {
         let currentIndex = 0;
         let autoplayTimer;
@@ -66,13 +57,7 @@ if (homeSlider instanceof HTMLElement) {
             const activeVideo = slides[currentIndex].querySelector('video');
             const hasActiveVideo = activeVideo instanceof HTMLVideoElement;
 
-            if (togglePlayButton instanceof HTMLButtonElement) {
-                setVisible(togglePlayButton, hasActiveVideo);
-            }
-
             if (muteButton instanceof HTMLButtonElement) {
-                setVisible(muteButton, hasActiveVideo);
-
                 if (hasActiveVideo) {
                     muteButton.setAttribute('aria-label', activeVideo.muted ? 'Unmute animation' : 'Mute animation');
                     muteButton.querySelector('[data-icon-muted]')?.classList.toggle('hidden', !activeVideo.muted);
